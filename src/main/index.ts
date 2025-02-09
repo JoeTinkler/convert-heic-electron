@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
-import { convertHeicToJpeg } from './helpers/convert';
+import { convertHeic } from './helpers/convert';
 
 function createWindow(): void {
   // Create the browser window.
@@ -73,20 +73,18 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
-ipcMain.on("convertToHeic", async (event, filePath) => {
-  console.log("received convertToHeic", { event, filePath });
+ipcMain.on("convertToHeic", async (event, { path, outputType }: ConvertHeicEvent) => {
   try {
-    const output = await convertHeicToJpeg(filePath);
+    const output = await convertHeic(path, outputType);
     const base64 = Buffer.from(output).toString('base64');
-    console.log('sending convertedHeic', filePath);
-    event.sender.send('convertedHeic', filePath, `data:image/jpg;base64,${base64}`);
+    const response: ConvertedHeicEvent = { path, src: `data:image/jpg;base64,${base64}` };
+    event.sender.send('convertedHeic', response);
   } catch (e) {
-    const message = e instanceof Error ? e.message : JSON.stringify(e);
-    console.error(message);
+    const response: ConvertHeicErrorEvent = { path, error: e instanceof Error ? e.message : JSON.stringify(e) };
+    event.sender.send('convertHeicError', response);
     dialog.showMessageBoxSync({
       type: "error",
-      message: "Error converting the file"
+      message: `Error converting the file: ${response.error}`
     });
-    event.sender.send('convertHeicError', filePath, message);
   }
 });

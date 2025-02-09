@@ -1,42 +1,33 @@
 import React, { useRef, useState } from 'react';
-import picture from '../assets/picture.svg'
-import { DropWrapper, DropFileLabel, DropFileInput, BrowseLink } from './ui/dropTarget';
+import { DropWrapper, DropFileLabel, DropFileInput, BrowseLink, OutputTypeSelectWrapper } from './ui/dropTarget';
 import { FilesPreview } from './filesPreviewList';
 import { useFileStates } from '@renderer/helpers/useFileStates';
-import { useConvertHeic } from '@renderer/helpers/useConvertHeic';
-import { fileBase64Async, supportedImageTypes, validHeicPath } from '@renderer/helpers/file';
+import { Select } from './select';
+import { Picture } from './ui/picture';
+import { useFileDrop } from '@renderer/helpers/useFileDrop';
+
+const OUTPUT_OPTIONS: SelectOption[] = [
+  { value: 'JPEG', label: 'JPEG' },
+  { value: 'PNG', label: 'PNG' }
+];
 
 export const DropFileTarget: React.FC = () => {
   const wrapperRef = useRef<any>(null);
   const fileRef = useRef<any>(null);
-  const [dragActive, setDragActive] = useState<boolean>(false);
+  const [outputType, setOutputType] = useState<OutputType>(localStorage.getItem('outputType') as OutputType ?? 'JPEG');
   const { files, addFile, removeFile, setFileStatus } = useFileStates();
-  const { convertHeic } = useConvertHeic(setFileStatus);
+  const { dragActive, onDragEnter, onDragLeave, onDrop, onFileDrop } = useFileDrop(outputType, addFile, setFileStatus);
 
-  const onDragEnter = () => setDragActive(true);
-  const onDragLeave = () => setDragActive(false);
-  const onDrop = () => setDragActive(false);
-
-  const onFileDrop = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
-        return;
-    }
-    await Promise.all(Array.from(e.target.files).map(async (file) => {
-      const src = supportedImageTypes(file.path) ? await fileBase64Async(file) : picture;
-      if (!validHeicPath(file.path)) {
-        const src = await fileBase64Async(file);
-        addFile({ path: file.path, src, status: 'Error', error: 'Only .HEIC files are allowed' });
-        return;
-      }
-      addFile({ path: file.path, src: src.replace('data:application/octet-stream', 'data:image/heic'), status: 'Converting' });
-      convertHeic(file.path);
-    }));
-
-    e.target.value = '';
+  const onOutputTypeChange = (value: OutputType) => {
+    setOutputType(value);
+    localStorage.setItem('outputType', value);
   };
 
   return (
     <>
+      <OutputTypeSelectWrapper>
+        <Select value={outputType} options={OUTPUT_OPTIONS} onChange={(value) => onOutputTypeChange(value as OutputType)} />
+      </OutputTypeSelectWrapper>
       <DropWrapper
         ref={wrapperRef}
         onDragEnter={onDragEnter}
@@ -44,8 +35,8 @@ export const DropFileTarget: React.FC = () => {
         onDrop={onDrop}
         $dragActive={dragActive}
       >
-        <DropFileLabel>
-          <img src={picture} alt="" />
+        <DropFileLabel $dragActive={dragActive}>
+          <Picture highlight={dragActive} />
           <p>Drop your HEIC files here</p>
         </DropFileLabel>
         <DropFileInput ref={fileRef} type='file' onChange={onFileDrop} accept="image/heic" multiple={true} />

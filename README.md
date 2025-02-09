@@ -1,6 +1,6 @@
 # convert-heic-electron
 
-An Electron application with React and TypeScript
+An Electron application with React and TypeScript to convert HEIC files to JPEG or PNG.
 
 ## Recommended IDE Setup
 

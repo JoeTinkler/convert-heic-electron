@@ -4,13 +4,11 @@ const electron = window.electron.ipcRenderer;
 
 export const useConvertHeic = (setFileStatus: (file: Partial<FileState>) => void) => {
   useEffect(() => {
-    electron.on('convertedHeic', (event, path: string, src: string) => {
-      console.log(`convertedHeic`, { event, path, src });
+    electron.on('convertedHeic', (_, { path, src }: ConvertedHeicEvent) => {
       setFileStatus({ path, status: 'Converted', src }); 
     });
 
-    electron.on('convertedHeicError', (event, path: string, error: string) => {
-      console.log(`convertedHeicError`, { event, path, error });
+    electron.on('convertedHeicError', (_, { path, error }: ConvertHeicErrorEvent) => {
       setFileStatus({ path, status: 'Error', error });
     });
 
@@ -20,9 +18,8 @@ export const useConvertHeic = (setFileStatus: (file: Partial<FileState>) => void
     };
   }, [setFileStatus]);
 
-  const convertHeic = async (path: string) => {
-    console.log('sending convertToHeic', path);
-    electron.send('convertToHeic', path);
+  const convertHeic = async (params: ConvertHeicEvent) => {
+    electron.send('convertToHeic', params);
   };
 
   return { convertHeic };

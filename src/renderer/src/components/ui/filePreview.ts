@@ -8,7 +8,7 @@ export const DropFilePreviewItem = styled.div`
   position: relative;
   display: flex;
   margin-bottom: 10px;
-  background-color: #ddd;
+  background-color: ${({ theme }) => theme.item.background};
   padding: 15px;
   border-radius: 5px;
 
@@ -23,6 +23,7 @@ export const DropFilePreviewItemInfo = styled.div`
   justify-content: space-between;
   align-items: center;
   justify-content: center;
+  flex: 1;
 `;
 
 export const FilePreviewImage = styled.img`
@@ -36,20 +37,21 @@ export const FilePreviewImage = styled.img`
 export const FilePreviewStatus = styled.p<{ $status: FileStatus }>`
   font-size: 12px;
   border-radius: 3px;
-  padding: 2px 8px;
-  color: #fff;
+  padding: 10px 20px;
+  color: ${({ theme }) => theme.item.text};
   text-align: center;
-  background-color: ${({ $status }) => {
+  flex: 1;
+  background-color: ${({ $status, theme }) => {
     switch ($status) {
-      case 'Converting': return '#0074D9';
-      case 'Converted': return '#2ECC40 ';
-      case 'Error': return '#FF4136';
+      case 'Converting': return theme.item.pending;
+      case 'Converted': return theme.item.success;
+      case 'Error': return theme.item.error;
     }
   }};
 `;
 
 export const DropFilePreviewItemAction = styled.span`
-  background-color: #bc3e44;
+  background-color: ${({ theme }) => theme.item.remove};
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -64,7 +66,7 @@ export const DropFilePreviewItemAction = styled.span`
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.3s ease;
-  color: #fff;
+  color: ${({ theme }) => theme.item.text};
 
   &:hover {
    opacity: 1;

@@ -2,13 +2,7 @@
 
 An Electron application with React and TypeScript to convert HEIC files to JPEG or PNG. This is a GUI wrapper for the npm package [heic-convert](https://github.com/catdad-experiments/heic-convert).
 
-![Screenshot light mode]("/screenshots/Screenshot Light?raw=true" "Screenshot light mode")
-
-![Screenshot dark mode]("/screenshots/Screenshot Dark?raw=true" "Screenshot dark mode")
-
-![Screenshot convert in progress]("/screenshots/Screenshot In Progress?raw=true" "Screenshot convert in progress")
-
-![Screenshot convert completed]("/screenshots/Screenshot Converted?raw=true" "Screenshot convert completed")
+![Screenshot light mode](screenshots/Screenshot_Light.png) ![Screenshot convert completed](screenshots/Screenshot_Converted.png)
 
 # Instructions
 

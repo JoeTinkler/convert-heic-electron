@@ -18,11 +18,13 @@
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win portable",
     "build:mac": "electron-vite build && electron-builder --mac",
-    "build:linux": "electron-vite build && electron-builder --linux"
+    "build:linux": "electron-vite build && electron-builder --linux",
+    "build:icons": "./node_modules/.bin/electron-icon-builder --input=./resources/icon.png --output=./build"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
+    "electron-icon-builder": "^2.0.1",
     "heic-convert": "^2.1.0",
     "styled-components": "^6.1.15"
   },
